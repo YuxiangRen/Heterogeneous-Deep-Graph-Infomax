@@ -7,12 +7,9 @@ import matplotlib.pyplot as plt
 
 from sklearn.cluster import KMeans, AgglomerativeClustering
 from sklearn.metrics import normalized_mutual_info_score, adjusted_rand_score
-# from sklearn import metrics
-# >>> labels_true = [0, 0, 0, 1, 1, 1]
-# >>> labels_pred = [0, 0, 1, 1, 2, 2]
 
-# >>> metrics.adjusted_rand_score(labels_true, labels_pred)
-from sklearn.neighbors import KNeighborsClassifier
+
+
 from sklearn import linear_model
 from sklearn.metrics import roc_curve, f1_score, silhouette_score
 from sklearn import manifold

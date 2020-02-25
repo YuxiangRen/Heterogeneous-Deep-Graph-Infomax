@@ -95,10 +95,6 @@ def adj_to_bias(adj, sizes, nhood=1):
     return -1e9 * (1.0 - mt)
 
 
-###############################################
-# This section of code adapted from tkipf/gcn #
-###############################################
-
 def parse_index_file(filename):
     """Parse index file."""
     index = []
@@ -112,50 +108,13 @@ def sample_mask(idx, l):
     mask[idx] = 1
     return np.array(mask, dtype=np.bool)
 
-#def load_data(dataset_str): # {'pubmed', 'citeseer', 'cora'}
-#    """Load data."""
-#    names = ['x', 'y', 'tx', 'ty', 'allx', 'ally', 'graph']
-#    objects = []
-#    for i in range(len(names)):
-#        with open("data/ind.{}.{}".format(dataset_str, names[i]), 'rb') as f:
-#            if sys.version_info > (3, 0):
-#                objects.append(pkl.load(f, encoding='latin1'))
-#            else:
-#                objects.append(pkl.load(f))
-#
-#    x, y, tx, ty, allx, ally, graph = tuple(objects)
-#    test_idx_reorder = parse_index_file("data/ind.{}.test.index".format(dataset_str))
-#    test_idx_range = np.sort(test_idx_reorder)
-#
-#    if dataset_str == 'citeseer':
-#        # Fix citeseer dataset (there are some isolated nodes in the graph)
-#        # Find isolated nodes, add them as zero-vecs into the right position
-#        test_idx_range_full = range(min(test_idx_reorder), max(test_idx_reorder)+1)
-#        tx_extended = sp.lil_matrix((len(test_idx_range_full), x.shape[1]))
-#        tx_extended[test_idx_range-min(test_idx_range), :] = tx
-#        tx = tx_extended
-#        ty_extended = np.zeros((len(test_idx_range_full), y.shape[1]))
-#        ty_extended[test_idx_range-min(test_idx_range), :] = ty
-#        ty = ty_extended
-#
-#    features = sp.vstack((allx, tx)).tolil()
-#    features[test_idx_reorder, :] = features[test_idx_range, :]
-#    adj = nx.adjacency_matrix(nx.from_dict_of_lists(graph))
-#
-#    labels = np.vstack((ally, ty))
-#    labels[test_idx_reorder, :] = labels[test_idx_range, :]
-#
-#    idx_test = test_idx_range.tolist()
-#    idx_train = range(len(y))
-#    idx_val = range(len(y), len(y)+500)
-#
-#    return adj, features, labels, idx_train, idx_val, idx_test
-def load_data(path="../data/DBLP/", dataset="DBLP"):
+
+def load_data(path="../data/IMDB/3-class/", dataset="IMDB"):
     """Load citation network dataset (cora only for now)"""
     print('Loading {} dataset...'.format(dataset))
     features = None
     labels = []
-    with open(path+'author_features_334.pickle', 'rb') as f:
+    with open(path+'movie_feature_vector_6334.pickle', 'rb') as f:
          features = pkl.load(f) 
     f.close
     features = sp.csr_matrix(features, dtype=np.float32) 
@@ -168,7 +127,7 @@ def load_data(path="../data/DBLP/", dataset="DBLP"):
     labels = encode_onehot(labels)    
 
     adjs = []
-    for adj_name in ['net_APA','net_APCPA','net_APTPA']:
+    for adj_name in ['movie_director_movie','movie_actor_movie','movie_keyword_movie']:
         with open(path+'{}_adj.pickle'.format(adj_name), 'rb') as f:
              adj = pkl.load(f) 
         f.close
@@ -179,15 +138,6 @@ def load_data(path="../data/DBLP/", dataset="DBLP"):
     original = list(set(original) ^ set(idx_train))
     idx_val = random.sample(original,800)
     idx_test = list(set(original) ^ set(idx_val))
-    
-    
-#    adj = torch.FloatTensor(np.array(adj.todense()))
-#    features = torch.FloatTensor(np.array(features.todense()))
-#    labels = torch.LongTensor(np.where(labels)[1])
-#
-#    idx_train = torch.LongTensor(idx_train)
-#    idx_val = torch.LongTensor(idx_val)
-#    idx_test = torch.LongTensor(idx_test)
 
     return adjs, features, labels, idx_train, idx_val, idx_test
 

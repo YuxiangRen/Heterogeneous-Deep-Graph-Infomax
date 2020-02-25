@@ -5,9 +5,9 @@ import torch.nn as nn
 import os
 import glob
 from models import DGI, LogReg
-from utils import process, clustering
+from utils import process
 
-#dataset = 'cora'
+
 
 # training params
 batch_size = 1
@@ -153,7 +153,6 @@ for _ in range(5):
         logits_val = log(val_embs)
         loss_val = xent(logits_val, val_lbls)
         loss_values.append(loss_val)
-#        print("train_loss: "+ str(loss) +"  "+"val_loss: "+ str(loss_val) )
         loss.backward()
         opt.step()
         torch.save(log.state_dict(), '{}.mlp.pkl'.format(epoch))
@@ -193,26 +192,12 @@ for _ in range(5):
     preds = torch.argmax(logits, dim=1)
     acc = torch.sum(preds == test_lbls).float() / test_lbls.shape[0]
     accs.append(acc)
-#    print(acc)
-#    tot += acc
     mac = torch.Tensor(np.array(process.macro_f1(preds, test_lbls))) 
-#    tot_mac += mac
     mac_f1.append(mac)
-#print('Average accuracy:', tot / 50)
-#print('Average mac_f1:', tot_mac / 50)
+    
 accs = torch.stack(accs)
 print('Average accuracy:',accs.mean())
 print('accuracy std:',accs.std())
 mac_f1 = torch.stack(mac_f1)
 print('Average mac_f1:', mac_f1.mean())
 print('mac_f1 std:',mac_f1.std())
-print(embeds.size())
-embeddings = embeds.to(torch.device("cpu")).squeeze(0).detach().numpy()   
-print(embeddings.shape)
-print(labels.size())
-labels_np = labels.squeeze(0)
-print(labels_np.size())
-#k=labels_np.max().item() + 1
-#print(k)
-labels_np = labels_np.to(torch.device("cpu")).numpy()
-clustering.my_Kmeans(embeddings, labels_np, k=4, time=10, return_NMI=False)
