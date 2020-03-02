@@ -7,13 +7,11 @@ Node-level dimension: 16<br>
 Attention head: 4<br>
 Semantic-level attention vector: 8<br>
 learning rate: 0.02<br>
-Drop out ratio: 0.6<br>
 
 # HDGI-C: <br>
 Node-level dimension: 64<br>
 Semantic-level attention vector: 8<br>
 learning rate: 0.02<br>
-Drop out ratio: 0.6<br>
 
 # GAT:<br>
 Node-level dimension: 16<br>
